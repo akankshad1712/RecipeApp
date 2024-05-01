@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipe App</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Verdana, Geneva, Tahoma, sans-serif;
+        }
+
+        body {
+            background-color: #f9f9f9;
+            color: #333;
+        }
+
+        header {
+            background-color: #003f5c;
+            color: #fff;
+            padding: 20px 0;
+            text-align: center;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .searchBox {
+            border: none;
+            outline: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 16px;
+            margin-right: 8px;
+            width: 300px;
+        }
+
+        .searchBtn {
+            border: none;
+            outline: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            background-color: #007f5f;
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .container {
+            display: grid;
+            place-items: center;
+            min-height: 100vh;
+        }
+
+        .recipe-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .recipe {
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 16px;
+            background-color: #fff;
+        }
+
+        .recipe img {
+            width: 20%;
+            border-radius: 0px;
+        }
+
+        h1, h2, h3 {
+            margin-bottom: 10px;
+        }
+
+        p {
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <h1>Recipe App</h1>
+            <form id="searchForm">
+                <input type="text" placeholder="Search for recipes..." class="searchBox">
+                <button type="submit" class="searchBtn">Search</button>
+            </form>
+        </nav>
+    </header>
+    <main>
+        <section>
+            <div class="recipe-container">
+                <h2>Search your favorite recipes</h2>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        const searchBox = document.querySelector('.searchBox');
+        const recipeContainer = document.querySelector('.recipe-container');
+        const searchForm = document.getElementById('searchForm');
+
+        const fetchRecipes = async (query) => {
+            recipeContainer.innerHTML = "<h2>Fetching Recipes...</h2>";
+            const data = await fetch(`https://www.themealdb.com/api/json/v1/1/search.php?s=${query}`);
+            const response = await data.json();
+           
+            recipeContainer.innerHTML = "";
+            response.meals.forEach(meal => {
+                const recipeDiv = document.createElement('div');
+                recipeDiv.classList.add('recipe');
+                recipeDiv.innerHTML = `
+                    <img src="${meal.strMealThumb}">
+                    <h3>${meal.strMeal}</h3>
+                    <p>${meal.strArea}</p>
+                    <p>${meal.strCategory}</p>
+                `;
+                recipeContainer.appendChild(recipeDiv);
+            });
+        }
+
+        searchForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const searchInput = searchBox.value.trim();
+            fetchRecipes(searchInput);
+        });
+    </script>
+</body>
+</html>
